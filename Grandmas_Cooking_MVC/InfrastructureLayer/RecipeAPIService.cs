@@ -35,8 +35,24 @@ namespace Grandmas_Cooking_MVC.InfrastructureLayer
         // Create recipe
         public async Task<bool> CreateRecipeAsync(Recipe recipe)
         {
-            var url = "https://localhost:7137/api/RecipeAPI/recipes";
+                var url = "https://localhost:7137/api/RecipeAPI/recipes";
+
+            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", authApiService.GetTokenFromSession());
+
             var result = await httpClient.PostAsJsonAsync(url, recipe);
+            return result.IsSuccessStatusCode;
+        }
+
+        // Update recipe
+        public async Task<bool> UpdateRecipeAsync(Recipe recipe)
+        {
+            if (recipe == null) return false;
+
+            var url = $"https://localhost:7137/api/RecipeAPI/recipes/{recipe.Id}";
+
+            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", authApiService.GetTokenFromSession());
+
+            var result = await httpClient.PutAsJsonAsync(url, recipe);
             return result.IsSuccessStatusCode;
         }
 
@@ -45,6 +61,9 @@ namespace Grandmas_Cooking_MVC.InfrastructureLayer
         public async Task<List<Recipe>?> GetUserRecipesAsync()
         {
             var url = "https://localhost:7137/api/RecipeAPI/my-recipes";
+
+            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", authApiService.GetTokenFromSession());
+
             var result = await httpClient.GetAsync(url);
             if (result.Content.Headers.ContentLength == 0) return new List<Recipe>();
             var books = await result.Content.ReadFromJsonAsync<List<Recipe>>();
@@ -56,6 +75,9 @@ namespace Grandmas_Cooking_MVC.InfrastructureLayer
         public async Task<Recipe?> GetRecipeByIdAsync(int id)
         {
             var url = $"https://localhost:7137/api/RecipeAPI/recipes/{id}";
+
+            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", authApiService.GetTokenFromSession());
+
             var result = await httpClient.GetAsync(url);
             if (result.Content.Headers.ContentLength == 0) return null;
             var recipe = await result.Content.ReadFromJsonAsync<Recipe>();
@@ -67,6 +89,9 @@ namespace Grandmas_Cooking_MVC.InfrastructureLayer
         public async Task<bool> DeleteRecipeAsync(int id)
         {
             var url = $"https://localhost:7137/api/RecipeAPI/{id}";
+
+            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", authApiService.GetTokenFromSession());
+
             var result = await httpClient.DeleteAsync(url);
             return result.IsSuccessStatusCode;
         }
@@ -76,6 +101,9 @@ namespace Grandmas_Cooking_MVC.InfrastructureLayer
         public async Task<bool> AddIngredientAsync(int recipeId, Ingredient ingredient)
         {
             var url = $"https://localhost:7137/api/RecipeAPI/recipes/{recipeId}/ingredients";
+
+            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", authApiService.GetTokenFromSession());
+
             var result = await httpClient.PostAsJsonAsync(url, ingredient);
             return result.IsSuccessStatusCode;
         }
@@ -85,6 +113,9 @@ namespace Grandmas_Cooking_MVC.InfrastructureLayer
         public async Task<bool> AddStepAsync(int recipeId, RecipeStep step)
         {
             var url = $"https://localhost:7137/api/RecipeAPI/recipes/{recipeId}/steps";
+
+            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", authApiService.GetTokenFromSession());
+
             var result = await httpClient.PostAsJsonAsync(url, step);
             return result.IsSuccessStatusCode;
         }

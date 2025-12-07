@@ -42,37 +42,42 @@ namespace Grandmas_Cooking_MVC.Controllers
         }
 
 
-        //// JSON endpoint for AJAX polling - return lightweight DTOs to avoid circular references
-        //[HttpGet]
-        //public async Task<IActionResult> RecipesJson()
-        //{
-        //    var recipes = await _recipeAPIService.GetRecipesAsync();
-        //    var dto = (recipes ?? new List<Recipe>())
-        //                .Select(r => new { id = r.Id, name = r.Name })
-        //                .ToList();
-        //    return Json(dto);
-        //}
+        // JSON endpoint for AJAX polling - return lightweight DTOs to avoid circular references
+        [HttpGet]
+        public async Task<IActionResult> RecipesJson()
+        {
+            var recipes = await _recipeAPIService.GetRecipesAsync();
+            var dto = (recipes ?? new List<Recipe>())
+                        .Select(r => new { id = r.Id, name = r.Name })
+                        .ToList();
+            return Json(dto);
+        }
 
 
         [HttpGet]
-        public async Task<IActionResult> Create1()
+        public IActionResult Create1()
         {
-            return View();
+            // Ensure view has a TempRecipe model so asp-for binds correctly
+            return View(new TempRecipe());
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create1(int steps, int ingredients)
+        public IActionResult Create1(TempRecipe temp)
         {
-            
-            return RedirectToAction("Create2", new { steps, ingredients });
+            // Use the posted NumSteps/NumIngredients from TempRecipe
+            var steps = temp?.NumSteps ?? 0;
+            var ingredients = temp?.NumIngredients ?? 0;
+            return RedirectToAction("Create2", new { steps = steps, ingredients = ingredients });
         }
 
         [HttpGet]
-        public async Task<IActionResult> Create2(int steps, int ingredients)
+        public IActionResult Create2(int steps, int ingredients)
         {
+            // Prepare a Recipe and a TempRecipe with counts for the view
             Recipe newRecipe = new Recipe();
+            TempRecipe temp = new TempRecipe { NumIngredients = ingredients, NumSteps = steps };
 
-            var recipeTuple = ( newRecipe, steps, ingredients );
+            var recipeTuple = Tuple.Create(newRecipe, temp);
 
             return View(recipeTuple);
         }
@@ -88,6 +93,35 @@ namespace Grandmas_Cooking_MVC.Controllers
             else
             {
                 ModelState.AddModelError(string.Empty, "An error occurred while creating the recipe.");
+                return View(Tuple.Create(recipe, new TempRecipe()));
+            }
+        }
+
+        //RecipePage shows all the details for a recipe. Ingredients and steps can be updated, as they will be inputs, their default values being what is in the model. 
+
+        [HttpGet]
+        public async Task<IActionResult> RecipePage(int id)
+        {
+            var recipe = await _recipeAPIService.GetRecipeByIdAsync(id);
+            if (recipe == null)
+            {
+                return NotFound();
+            }
+            return View(recipe);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RecipePage(Recipe recipe)
+        {
+            // For simplicity, assume the entire recipe is updated
+            var result = await _recipeAPIService.UpdateRecipeAsync(recipe);
+            if (result)
+            {
+                return RedirectToAction("HomePage");
+            }
+            else
+            {
+                ModelState.AddModelError(string.Empty, "An error occurred while updating the recipe.");
                 return View(recipe);
             }
         }

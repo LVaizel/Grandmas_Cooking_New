@@ -1,0 +1,18 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model TempRecipe
+
+<form asp-action="Create1" method="post">
+    <h1> Create</h1>
+    <p>How many steps in your recipe?</p>
+    <input asp-for="NumSteps" min="1" />
+
+    <p>How many ingredients?</p>
+    <input asp-for="NumIngredients" min="1" />
+
+    <button type="submit">Create Recipe</button>
+
+</form>

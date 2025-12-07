@@ -1,0 +1,40 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model Tuple<Grandmas_Cooking_MVC.Models.RecipeModels.Recipe, Grandmas_Cooking_MVC.Models.RecipeModels.TempRecipe>
+
+<h1>Create a New Recipe</h1>
+
+<form asp-action="Create2" method="post">
+    <div>
+        <label>Recipe Name:</label>
+        <input type="text" name="Name" value="@Model.Item1.Name" />
+    </div>
+
+    <div>
+        <label>Ingredients:</label>
+
+        @for (int i = 0; i < Model.Item2.NumIngredients; i++)
+        {
+            <div>
+                <input type="text" name="Ingredients[@i].Name" placeholder="Ingredient name" />
+                <input type="number" name="Ingredients[@i].Portion" step="0.01" placeholder="Portion" />
+            </div>
+        }
+    </div>
+
+    <div>
+        <label>Instructions:</label>
+
+        @for (int i = 0; i < Model.Item2.NumSteps; i++)
+        {
+            <div>
+                <input type="hidden" name="RecipeSteps[@i].StepNumber" value="@(i + 1)" />
+                <input type="text" name="RecipeSteps[@i].Instruction" placeholder="Step instruction" />
+            </div>
+        }
+    </div>
+    <button type="submit">Create Recipe</button>
+</form>

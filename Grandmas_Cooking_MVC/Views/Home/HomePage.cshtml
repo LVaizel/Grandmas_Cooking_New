@@ -10,6 +10,7 @@
     <thead>
         <tr>
             <th>Recipe Name</th>
+            <th></th>
         </tr>
     </thead>
     <tbody id="recipes-tbody">
@@ -19,6 +20,9 @@
             {
                 <tr>
                     <td>@recipe.Name</td>
+                    <td>
+                        <a asp-action="RecipePage" asp-route-id="@recipe.Id" class="btn btn-sm btn-primary">View</a>
+                    </td>
                 </tr>
             }
         }
@@ -29,8 +33,7 @@
             </tr>
         }
     </tbody>
-</table>
-@* 
+</table>@* 
 <!-- jQuery from CDN -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js" crossorigin="anonymous"></script>
 
