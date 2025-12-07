@@ -70,8 +70,6 @@ public class RecipeAPIController : ControllerBase
     [HttpPost("recipes/{recipeId}/ingredients")]
     public async Task<IActionResult> AddIngredientAsync(int recipeId, [FromBody] Ingredient ingredient)
     {
-        // Optional: Security check (ensure user owns the recipe)
-        // You would need to fetch the recipe first to check the UserId.
 
         var result = await _recipeService.AddIngredientAsync(recipeId, ingredient);
 
