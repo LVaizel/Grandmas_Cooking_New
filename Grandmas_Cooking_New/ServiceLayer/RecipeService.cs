@@ -52,19 +52,47 @@ namespace Grandmas_Cooking_API.ServiceLayer
             await _context.SaveChangesAsync();
         }
 
-        public async Task UpdateRecipeAsync(Recipe recipe)
+        public async Task<Recipe?> UpdateRecipeAsync(Recipe recipe)
         {
-            if ( _context.Recipe.Any(r => r.Id == recipe.Id) )
+            var existing = await _context.Recipe
+                .Include(r => r.Ingredients)
+                .Include(r => r.RecipeSteps)
+                .FirstOrDefaultAsync(r => r.Id == recipe.Id);
+
+            if (existing == null)
             {
-                _context.Recipe.Update(recipe);
-                await _context.SaveChangesAsync();
+                return null;
             }
+
+
+            // Replace Ingredients: remove existing and add new
+            _context.Set<Ingredient>().RemoveRange(existing.Ingredients);
+            var newIngredients = recipe.Ingredients ?? new List<Ingredient>();
+            foreach (var ing in newIngredients)
+            {
+                ing.RecipeId = existing.Id;
+            }
+            _context.Set<Ingredient>().AddRange(newIngredients);
+
+            // Replace Steps: remove existing and add new with proper numbering
+            _context.Set<RecipeStep>().RemoveRange(existing.RecipeSteps);
+            var newSteps = recipe.RecipeSteps ?? new List<RecipeStep>();
+            for (int i = 0; i < newSteps.Count; i++)
+            {
+                newSteps[i].StepNumber = i + 1;
+                newSteps[i].RecipeId = existing.Id;
+            }
+            _context.Set<RecipeStep>().AddRange(newSteps);
+
+            await _context.SaveChangesAsync();
+
+            return await GetRecipeByIdAsync(existing.Id);
         }
 
         public async Task DeleteRecipeAsync(int id)
         {
             var recipe = await _context.Recipe.FindAsync(id);
-            if ( recipe != null )
+            if (recipe != null)
             {
                 _context.Recipe.Remove(recipe);
                 await _context.SaveChangesAsync();
@@ -108,5 +136,7 @@ namespace Grandmas_Cooking_API.ServiceLayer
                 .Include(s => s.Recipe)
                 .FirstOrDefaultAsync(s => s.StepNumber == step.StepNumber && s.RecipeId == recipeId);
         }
+
+
     }
 }

@@ -28,7 +28,7 @@ public class RecipeAPIController : ControllerBase
     {
         // Get User ID from Token
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if ( userId == null ) return Unauthorized();
+        if (userId == null) return Unauthorized();
 
         var recipes = await _recipeService.GetRecipesByUserIdAsync(userId);
         return Ok(recipes);
@@ -38,7 +38,7 @@ public class RecipeAPIController : ControllerBase
     public async Task<IActionResult> GetRecipeById(int id)
     {
         var recipe = await _recipeService.GetRecipeByIdAsync(id);
-        if ( recipe == null ) return NotFound();
+        if (recipe == null) return NotFound();
 
         // Ingredients are already included now!
         return Ok(recipe);
@@ -70,7 +70,7 @@ public class RecipeAPIController : ControllerBase
 
         var result = await _recipeService.AddIngredientAsync(recipeId, ingredient);
 
-        if ( result == null )
+        if (result == null)
         {
             return NotFound("Recipe not found.");
         }
@@ -82,17 +82,30 @@ public class RecipeAPIController : ControllerBase
     public async Task<IActionResult> AddStep(int recipeId, [FromBody] RecipeStep step)
     {
         // Optional: Validation
-        if ( string.IsNullOrWhiteSpace(step.Instruction) )
+        if (string.IsNullOrWhiteSpace(step.Instruction))
         {
             return BadRequest("Instruction text cannot be empty.");
         }
 
         var result = await _recipeService.AddStepAsync(recipeId, step);
 
-        if ( result == null )
+        if (result == null)
         {
             return NotFound("Recipe not found.");
         }
+
+        return Ok(result);
+    }
+
+    [HttpPut("recipes/{recipeId}/update")]
+    public async Task<IActionResult> UpdateRecipe(int recipeId, [FromBody] Recipe updated)
+    {
+        if (recipeId != updated.Id)
+        {
+            return NotFound("Recipe not found.");
+        }
+
+        var result = await _recipeService.UpdateRecipeAsync(updated);
 
         return Ok(result);
     }

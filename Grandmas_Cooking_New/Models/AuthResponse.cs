@@ -1,4 +1,4 @@
-﻿namespace Grandmas_Cooking_MVC.Models
+﻿namespace Grandmas_Cooking_API.Models
 {
     public class AuthResponse
     {
