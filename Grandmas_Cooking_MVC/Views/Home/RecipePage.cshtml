@@ -3,91 +3,129 @@
 @{
 }
 
-<h1>Recipe Details</h1>
-
-@if (Model == null)
-{
-    <p>Recipe not found.</p>
-}
-else
-{
-    <form asp-action="RecipePage" method="post">
-        <input type="hidden" name="Id" value="@Model.Id" />
-
-        <div>
-            <label>Recipe Name</label>
-            <input type="text" name="Name" value="@Model.Name" />
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h2 class="mb-0">Recipe Details</h2>
         </div>
-
-        <div>
-            <label>Description</label>
-            <textarea name="Description">@Model.Description</textarea>
-        </div>
-
-        <div>
-            <label>Image URL</label>
-            <input type="text" name="ImageUrl" value="@Model.ImageUrl" />
-            @if (!string.IsNullOrEmpty(Model.ImageUrl))
+        <div class="card-body">
+            @if (Model == null)
             {
-                <div>
-                    <img src="@Model.ImageUrl" alt="Recipe image" style="max-width:300px;" />
-                </div>
-            }
-        </div>
-
-        <div>
-            <label>UserId (owner)</label>
-            <input type="text" name="UserId" value="@Model.UserId" />
-        </div>
-
-        <div>
-            <label>Created At</label>
-            <input type="text" name="CreatedAt" value="@Model.CreatedAt.ToString("u")" readonly />
-        </div>
-
-        <h3>Ingredients</h3>
-        <div>
-            @if (Model.Ingredients != null && Model.Ingredients.Any())
-            {
-                for (int i = 0; i < Model.Ingredients.Count; i++)
-                {
-                    <div>
-                        <input type="hidden" name="Ingredients[@i].Id" value="@Model.Ingredients[i].Id" />
-                        <input type="text" name="Ingredients[@i].Name" value="@Model.Ingredients[i].Name" placeholder="Ingredient name" />
-                        <input type="number" step="0.01" name="Ingredients[@i].Portion" value="@Model.Ingredients[i].Portion" placeholder="Portion" />
-                        <input type="hidden" name="Ingredients[@i].RecipeId" value="@Model.Ingredients[i].RecipeId" />
-                    </div>
-                }
+                <p>Recipe not found.</p>
             }
             else
             {
-                <p>No ingredients listed.</p>
-            }
-        </div>
+                <form asp-action="RecipePage" method="post">
+                    <input type="hidden" name="Id" value="@Model.Id" />
+                    <!-- Ensure top-level fields are posted to avoid nulls in update -->
+                    <input type="hidden" name="Name" value="@Model.Name" />
+                    <input type="hidden" name="Description" value="@Model.Description" />
+                    <input type="hidden" name="ImageUrl" value="@Model.ImageUrl" />
+                    <input type="hidden" name="UserId" value="@Model.UserId" />
 
-        <h3>Steps</h3>
-        <div>
-            @if (Model.RecipeSteps != null && Model.RecipeSteps.Any())
-            {
-                for (int i = 0; i < Model.RecipeSteps.Count; i++)
-                {
-                    <div>
-                        <input type="hidden" name="RecipeSteps[@i].Id" value="@Model.RecipeSteps[i].Id" />
-                        <input type="number" name="RecipeSteps[@i].StepNumber" value="@Model.RecipeSteps[i].StepNumber" />
-                        <input type="text" name="RecipeSteps[@i].Instruction" value="@Model.RecipeSteps[i].Instruction" style="width:70%;" />
-                        <input type="hidden" name="RecipeSteps[@i].RecipeId" value="@Model.RecipeSteps[i].RecipeId" />
+                    <div class="mb-3 row">
+                        <label class="col-sm-2 col-form-label">Recipe Name</label>
+                        <div class="col-sm-10">
+                            <p class="form-control-plaintext">@Model.Name</p>
+                        </div>
                     </div>
-                }
-            }
-            else
-            {
-                <p>No steps listed.</p>
-            }
-        </div>
 
-        <div style="margin-top:1rem;">
-            <button type="submit" class="btn btn-primary">Save Changes</button>
-            <a asp-action="HomePage" class="btn btn-secondary">Back</a>
+                    <div class="mb-3 row">
+                        <label class="col-sm-2 col-form-label">Description</label>
+                        <div class="col-sm-10">
+                            <p class="form-control-plaintext">@Model.Description</p>
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row">
+                        <label class="col-sm-2 col-form-label">Image</label>
+                        <div class="col-sm-10">
+                            <p class="form-control-plaintext">@Model.ImageUrl</p>
+                            @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                            {
+                                <img src="@Model.ImageUrl" alt="Recipe image" class="img-fluid rounded" style="max-width:400px;" />
+                            }
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row">
+                        <label class="col-sm-2 col-form-label">Owner</label>
+                        <div class="col-sm-10">
+                            <p class="form-control-plaintext">@Model.UserId</p>
+                        </div>
+                    </div>
+
+                    <div class="mb-4 row">
+                        <label class="col-sm-2 col-form-label">Created</label>
+                        <div class="col-sm-10">
+                            <p class="form-control-plaintext">@Model.CreatedAt.ToString("u")</p>
+                        </div>
+                    </div>
+
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h5 class="mb-0">Ingredients</h5>
+                        </div>
+                        <div class="card-body">
+                            @if (Model.Ingredients != null && Model.Ingredients.Any())
+                            {
+                                for (int i = 0; i < Model.Ingredients.Count; i++)
+                                {
+                                    <div class="row g-2 align-items-center mb-2">
+                                        <input type="hidden" name="Ingredients[@i].Id" value="@Model.Ingredients[i].Id" />
+                                        <input type="hidden" name="Ingredients[@i].RecipeId" value="@Model.Ingredients[i].RecipeId" />
+
+                                        <div class="col-sm-7">
+                                            <input type="text" class="form-control" name="Ingredients[@i].Name" value="@Model.Ingredients[i].Name" placeholder="Ingredient name" />
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <input type="number" step="0.01" class="form-control" name="Ingredients[@i].Portion" value="@Model.Ingredients[i].Portion" placeholder="Portion" />
+                                        </div>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <p class="text-muted">No ingredients listed.</p>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h5 class="mb-0">Steps</h5>
+                        </div>
+                        <div class="card-body">
+                            @if (Model.RecipeSteps != null && Model.RecipeSteps.Any())
+                            {
+                                for (int i = 0; i < Model.RecipeSteps.Count; i++)
+                                {
+                                    <div class="row g-2 align-items-center mb-2">
+                                        <input type="hidden" name="RecipeSteps[@i].Id" value="@Model.RecipeSteps[i].Id" />
+                                        <input type="hidden" name="RecipeSteps[@i].RecipeId" value="@Model.RecipeSteps[i].RecipeId" />
+
+                                        <div class="col-sm-1">
+                                            <input type="number" class="form-control" name="RecipeSteps[@i].StepNumber" value="@Model.RecipeSteps[i].StepNumber" readonly />
+                                        </div>
+                                        <div class="col-sm-11">
+                                            <input type="text" class="form-control" name="RecipeSteps[@i].Instruction" value="@Model.RecipeSteps[i].Instruction" />
+                                        </div>
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <p class="text-muted">No steps listed.</p>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                        <a asp-action="HomePage" class="btn btn-secondary">Back</a>
+                    </div>
+                </form>
+            }
         </div>
-    </form>
-}
+    </div>
+</div>

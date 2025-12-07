@@ -43,12 +43,12 @@ namespace Grandmas_Cooking_MVC.InfrastructureLayer
             return result.IsSuccessStatusCode;
         }
 
-        // Update recipe
+        // Update recipe - must call API's /recipes/{id}/update
         public async Task<bool> UpdateRecipeAsync(Recipe recipe)
         {
             if (recipe == null) return false;
 
-            var url = $"https://localhost:7137/api/RecipeAPI/recipes/{recipe.Id}";
+            var url = $"https://localhost:7137/api/RecipeAPI/recipes/{recipe.Id}/update";
 
             httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", authApiService.GetTokenFromSession());
 

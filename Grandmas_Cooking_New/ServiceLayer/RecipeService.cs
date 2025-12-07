@@ -64,6 +64,11 @@ namespace Grandmas_Cooking_API.ServiceLayer
                 return null;
             }
 
+            // Update basic fields
+            existing.Name = recipe.Name;
+            existing.Description = recipe.Description;
+            existing.ImageUrl = recipe.ImageUrl;
+            // Owner/UserId should not change here; CreatedAt remains as original
 
             // Replace Ingredients: remove existing and add new
             _context.Set<Ingredient>().RemoveRange(existing.Ingredients);

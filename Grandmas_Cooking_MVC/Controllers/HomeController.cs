@@ -113,16 +113,33 @@ namespace Grandmas_Cooking_MVC.Controllers
         [HttpPost]
         public async Task<IActionResult> RecipePage(Recipe recipe)
         {
-            // For simplicity, assume the entire recipe is updated
-            var result = await _recipeAPIService.UpdateRecipeAsync(recipe);
+            // Fetch existing full recipe first so we don't accidentally wipe fields if collections failed to bind
+            var existing = await _recipeAPIService.GetRecipeByIdAsync(recipe.Id);
+            if (existing == null)
+            {
+                return NotFound();
+            }
+
+            // Only replace collections if they were posted; otherwise keep existing
+            existing.Ingredients = recipe.Ingredients ?? existing.Ingredients;
+            existing.RecipeSteps = recipe.RecipeSteps ?? existing.RecipeSteps;
+
+            var result = await _recipeAPIService.UpdateRecipeAsync(existing);
             if (result)
             {
-                return RedirectToAction("HomePage");
+                // Reload the page via GET so full recipe data (name/description/etc.) is fetched from API and displayed
+                return RedirectToAction("RecipePage", new { id = recipe.Id });
             }
             else
             {
                 ModelState.AddModelError(string.Empty, "An error occurred while updating the recipe.");
-                return View(recipe);
+                // Fetch full recipe from API so view has all fields (top section) populated
+                var full = await _recipeAPIService.GetRecipeByIdAsync(recipe.Id);
+                if (full == null)
+                {
+                    return NotFound();
+                }
+                return View(full);
             }
         }
     }
