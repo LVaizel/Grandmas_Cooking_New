@@ -2,6 +2,8 @@
 using Grandmas_Cooking_API.ServiceLayer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Security.Claims;
 
 [Authorize]
@@ -18,9 +20,11 @@ public class RecipeAPIController : ControllerBase
 
     [HttpGet("recipes")]
     public async Task<IActionResult> GetRecipes()
+    //public async Task<IList<Recipe>> GetRecipes()
     {
         var recipes = await _recipeService.GetAllRecipesAsync();
         return Ok(recipes);
+        //return recipes;
     }
 
     [HttpGet("my-recipes")]
