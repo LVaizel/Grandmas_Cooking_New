@@ -1,0 +1,80 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model List<Recipe>?
+
+<h1> Home Page</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Recipe Name</th>
+        </tr>
+    </thead>
+    <tbody id="recipes-tbody">
+        @if (Model != null && Model.Any())
+        {
+            foreach (var recipe in Model)
+            {
+                <tr>
+                    <td>@recipe.Name</td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="4">No recipes available.</td>
+            </tr>
+        }
+    </tbody>
+</table>
+@* 
+<!-- jQuery from CDN -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" crossorigin="anonymous"></script>
+
+<script>
+    $(function () {
+        // initial data: project to lightweight DTOs so shape matches AJAX response
+        var initial = @Html.Raw(System.Text.Json.JsonSerializer.Serialize((Model ?? new List<Recipe>()).Select(r => new { id = r.Id, name = r.Name })));
+
+        function render(recipes) {
+            var $tbody = $('#recipes-tbody');
+            $tbody.empty();
+
+            if (!recipes || recipes.length === 0) {
+                $tbody.append('<tr><td colspan="4">No recipes available.</td></tr>');
+                return;
+            }
+
+            recipes.forEach(function (r) {
+                // encode text to prevent XSS
+                var name = $('<div/>').text(r.name || '').html();
+                var tr = '<tr><td>' + name + '</td></tr>';
+                $tbody.append(tr);
+            });
+        }
+
+        // render server model immediately
+        render(initial);
+
+        // polling function
+        function fetchRecipes() {
+            $.ajax({
+                url: '@Url.Action("RecipesJson", "Home")',
+                method: 'GET',
+                dataType: 'json',
+                success: function (data) {
+                    render(data);
+                },
+                error: function (xhr, status, err) {
+                    console.error('Error fetching recipes:', status, err);
+                }
+            });
+        }
+
+        // start polling every 0.5 seconds
+        setInterval(fetchRecipes, 500);
+    });
+</script></script> *@

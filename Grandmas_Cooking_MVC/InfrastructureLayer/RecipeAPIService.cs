@@ -7,10 +7,12 @@ namespace Grandmas_Cooking_MVC.InfrastructureLayer
     {
 
         private HttpClient httpClient;
+        private readonly AuthApiService authApiService;
 
-        public RecipeAPIService(HttpClient httpClient)
+        public RecipeAPIService(HttpClient httpClient, AuthApiService authApiService)
         {
             this.httpClient = httpClient;
+            this.authApiService = authApiService;
         }
 
         // get data
@@ -18,6 +20,8 @@ namespace Grandmas_Cooking_MVC.InfrastructureLayer
         public async Task<List<Recipe>?> GetRecipesAsync()
         {
             var url = "https://localhost:7137/api/RecipeAPI/recipes";
+
+            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", authApiService.GetTokenFromSession());
 
             var result = await httpClient.GetAsync(url);
 

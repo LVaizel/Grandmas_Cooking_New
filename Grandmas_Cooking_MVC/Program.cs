@@ -10,6 +10,16 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
+// Register IHttpContextAccessor so services can access HttpContext/Session
+builder.Services.AddHttpContextAccessor();
+
+//builder.Services.AddScoped<Grandmas_Cooking_MVC.InfrastructureLayer.RecipeAPIService>();
+//builder.Services.AddScoped<Grandmas_Cooking_MVC.InfrastructureLayer.AuthApiService>();
+
+builder.Services.AddHttpClient<Grandmas_Cooking_MVC.InfrastructureLayer.RecipeAPIService>();
+builder.Services.AddHttpClient<Grandmas_Cooking_MVC.InfrastructureLayer.AuthApiService>();
+
+
 var app = builder.Build();
 
 app.UseSession();
@@ -31,7 +41,7 @@ app.MapStaticAssets();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}")
+    pattern: "{controller=Home}/{action=LoginPage}/{id?}")
     .WithStaticAssets();
 
 

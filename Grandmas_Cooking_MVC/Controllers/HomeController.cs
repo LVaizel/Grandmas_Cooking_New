@@ -1,6 +1,7 @@
 using Grandmas_Cooking_MVC.InfrastructureLayer;
 using Grandmas_Cooking_MVC.Models;
 using Grandmas_Cooking_MVC.Models.RecipeModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.Reflection.Metadata.Ecma335;
@@ -11,10 +12,12 @@ namespace Grandmas_Cooking_MVC.Controllers
     public class HomeController : Controller
     {
         private RecipeAPIService _recipeAPIService;
+        private AuthApiService _authApiService;
 
-        public HomeController(RecipeAPIService recipeApiService)
+        public HomeController(RecipeAPIService recipeApiService, AuthApiService authApiService)
         {
             _recipeAPIService = recipeApiService;
+            _authApiService = authApiService;
         }
 
         [HttpGet]
@@ -27,6 +30,8 @@ namespace Grandmas_Cooking_MVC.Controllers
         public async Task<IActionResult> LoginPage(LoginRequest _loginDto)
         {
             // Minimal placeholder: redirect to HomePage after POST
+            var authResponse = await _authApiService.GetAuthResponse(_loginDto);
+
             return RedirectToAction("HomePage");
         }
 
@@ -36,6 +41,17 @@ namespace Grandmas_Cooking_MVC.Controllers
             return View(recipes);
         }
 
+
+        //// JSON endpoint for AJAX polling - return lightweight DTOs to avoid circular references
+        //[HttpGet]
+        //public async Task<IActionResult> RecipesJson()
+        //{
+        //    var recipes = await _recipeAPIService.GetRecipesAsync();
+        //    var dto = (recipes ?? new List<Recipe>())
+        //                .Select(r => new { id = r.Id, name = r.Name })
+        //                .ToList();
+        //    return Json(dto);
+        //}
 
 
         [HttpGet]

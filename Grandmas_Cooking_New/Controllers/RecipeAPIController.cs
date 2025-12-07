@@ -53,6 +53,7 @@ public class RecipeAPIController : ControllerBase
     {
         // Automatically assign the logged-in user to the recipe
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        
         recipe.UserId = userId;
 
         await _recipeService.AddRecipeAsync(recipe);
