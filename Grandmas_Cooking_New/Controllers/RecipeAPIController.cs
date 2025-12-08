@@ -108,6 +108,20 @@ public class RecipeAPIController : ControllerBase
             return NotFound("Recipe not found.");
         }
 
+        // Enforce ownership: only creator can update
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userId == null) return Unauthorized();
+
+        var existing = await _recipeService.GetRecipeByIdAsync(recipeId);
+        if (existing == null) return NotFound("Recipe not found.");
+        if (!string.Equals(existing.UserId, userId, StringComparison.Ordinal))
+        {
+            return Forbid();
+        }
+
+        // Ignore any spoofed UserId on the payload
+        updated.UserId = existing.UserId;
+
         var result = await _recipeService.UpdateRecipeAsync(updated);
 
         return Ok(result);

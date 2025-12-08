@@ -35,12 +35,33 @@ namespace Grandmas_Cooking_MVC.Controllers
             return RedirectToAction("HomePage");
         }
 
-        public async Task<IActionResult> HomePage()
+        [HttpGet]
+        public IActionResult RegisterPage()
         {
-            var recipes = await _recipeAPIService.GetRecipesAsync();
-            return View(recipes);
+            return View();
         }
 
+        [HttpPost]
+        public async Task<IActionResult> RegisterPage(RegisterRequest request)
+        {
+            var ok = await _authApiService.RegisterAsync(request);
+            if (ok)
+            {
+                return RedirectToAction("LoginPage");
+            }
+
+            ModelState.AddModelError(string.Empty, "Registration failed.");
+            return View(request);
+        }
+
+        public async Task<IActionResult> HomePage()
+        {
+            // Always fetch updated lists for (all, mine) to avoid stale data
+            var all = await _recipeAPIService.GetRecipesAsync() ?? new List<Recipe>();
+            var mine = await _recipeAPIService.GetUserRecipesAsync() ?? new List<Recipe>();
+            var model = Tuple.Create(all, mine);
+            return View(model);
+        }
 
         // JSON endpoint for AJAX polling - return lightweight DTOs to avoid circular references
         [HttpGet]
@@ -120,6 +141,11 @@ namespace Grandmas_Cooking_MVC.Controllers
                 return NotFound();
             }
 
+            // Update editable top-level fields
+            existing.Description = recipe.Description;
+            existing.ImageUrl = recipe.ImageUrl;
+            // Name remains read-only in view; keep existing.Name
+
             // Only replace collections if they were posted; otherwise keep existing
             existing.Ingredients = recipe.Ingredients ?? existing.Ingredients;
             existing.RecipeSteps = recipe.RecipeSteps ?? existing.RecipeSteps;
@@ -141,6 +167,13 @@ namespace Grandmas_Cooking_MVC.Controllers
                 }
                 return View(full);
             }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteRecipe(int id)
+        {
+            var ok = await _recipeAPIService.DeleteRecipeAsync(id);
+            return RedirectToAction("HomePage");
         }
     }
 }

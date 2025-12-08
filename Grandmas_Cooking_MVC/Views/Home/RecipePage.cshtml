@@ -17,11 +17,6 @@
             {
                 <form asp-action="RecipePage" method="post">
                     <input type="hidden" name="Id" value="@Model.Id" />
-                    <!-- Ensure top-level fields are posted to avoid nulls in update -->
-                    <input type="hidden" name="Name" value="@Model.Name" />
-                    <input type="hidden" name="Description" value="@Model.Description" />
-                    <input type="hidden" name="ImageUrl" value="@Model.ImageUrl" />
-                    <input type="hidden" name="UserId" value="@Model.UserId" />
 
                     <div class="mb-3 row">
                         <label class="col-sm-2 col-form-label">Recipe Name</label>
@@ -33,17 +28,17 @@
                     <div class="mb-3 row">
                         <label class="col-sm-2 col-form-label">Description</label>
                         <div class="col-sm-10">
-                            <p class="form-control-plaintext">@Model.Description</p>
+                            <textarea name="Description" class="form-control" rows="3">@Model.Description</textarea>
                         </div>
                     </div>
 
                     <div class="mb-3 row">
                         <label class="col-sm-2 col-form-label">Image</label>
                         <div class="col-sm-10">
-                            <p class="form-control-plaintext">@Model.ImageUrl</p>
+                            <input type="text" name="ImageUrl" class="form-control" value="@Model.ImageUrl" />
                             @if (!string.IsNullOrEmpty(Model.ImageUrl))
                             {
-                                <img src="@Model.ImageUrl" alt="Recipe image" class="img-fluid rounded" style="max-width:400px;" />
+                                <img src="@Model.ImageUrl" alt="Recipe image" class="img-fluid rounded mt-2" style="max-width:400px;" />
                             }
                         </div>
                     </div>
@@ -79,7 +74,10 @@
                                             <input type="text" class="form-control" name="Ingredients[@i].Name" value="@Model.Ingredients[i].Name" placeholder="Ingredient name" />
                                         </div>
                                         <div class="col-sm-3">
-                                            <input type="number" step="0.01" class="form-control" name="Ingredients[@i].Portion" value="@Model.Ingredients[i].Portion" placeholder="Portion" />
+                                            <div class="input-group">
+                                                <input type="number" step="0.01" class="form-control" name="Ingredients[@i].Portion" value="@Model.Ingredients[i].Portion" placeholder="Portion" />
+                                                <span class="input-group-text">g</span>
+                                            </div>
                                         </div>
                                     </div>
                                 }
@@ -122,9 +120,16 @@
 
                     <div class="d-flex gap-2">
                         <button type="submit" class="btn btn-primary">Save Changes</button>
-                        <a asp-action="HomePage" class="btn btn-secondary">Back</a>
                     </div>
                 </form>
+
+                <div class="d-flex gap-2 mt-2">
+                    <form asp-action="DeleteRecipe" method="post" class="d-inline">
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('Delete this recipe?');">Delete</button>
+                    </form>
+                    <a asp-action="HomePage" class="btn btn-secondary">Back</a>
+                </div>
             }
         </div>
     </div>

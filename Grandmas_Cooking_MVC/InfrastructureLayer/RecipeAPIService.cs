@@ -88,6 +88,7 @@ namespace Grandmas_Cooking_MVC.InfrastructureLayer
 
         public async Task<bool> DeleteRecipeAsync(int id)
         {
+            // API route is DELETE /api/RecipeAPI/{id}
             var url = $"https://localhost:7137/api/RecipeAPI/{id}";
 
             httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", authApiService.GetTokenFromSession());

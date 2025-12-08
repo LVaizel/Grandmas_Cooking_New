@@ -1,0 +1,33 @@
+@model Grandmas_Cooking_MVC.Models.RegisterRequest
+
+<div class="container mt-4">
+    <div class="card" style="max-width: 600px; margin: 0 auto;">
+        <div class="card-header">
+            <h2 class="mb-0">Register</h2>
+        </div>
+        <div class="card-body">
+            <form asp-action="RegisterPage" method="post" class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label" for="Name">Name</label>
+                    <input asp-for="Name" class="form-control" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label" for="UserName">Username</label>
+                    <input asp-for="UserName" class="form-control" />
+                </div>
+                <div class="col-md-12">
+                    <label class="form-label" for="Email">Email</label>
+                    <input asp-for="Email" class="form-control" />
+                </div>
+                <div class="col-md-12">
+                    <label class="form-label" for="Password">Password</label>
+                    <input asp-for="Password" type="password" class="form-control" />
+                </div>
+                <div class="col-12 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">Register</button>
+                    <a asp-action="LoginPage" class="btn btn-secondary">Back to Login</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -5,14 +5,26 @@
 }
 @model TempRecipe
 
-<form asp-action="Create1" method="post">
-    <h1> Create</h1>
-    <p>How many steps in your recipe?</p>
-    <input asp-for="NumSteps" min="1" />
-
-    <p>How many ingredients?</p>
-    <input asp-for="NumIngredients" min="1" />
-
-    <button type="submit">Create Recipe</button>
-
-</form>
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h2 class="mb-0">Create Recipe</h2>
+        </div>
+        <div class="card-body">
+            <form asp-action="Create1" method="post" class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">How many steps?</label>
+                    <input asp-for="NumSteps" min="1" class="form-control" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">How many ingredients?</label>
+                    <input asp-for="NumIngredients" min="1" class="form-control" />
+                </div>
+                <div class="col-12 d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">Next</button>
+                    <a asp-action="HomePage" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

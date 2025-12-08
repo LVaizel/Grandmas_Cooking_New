@@ -35,6 +35,14 @@ namespace Grandmas_Cooking_MVC.InfrastructureLayer
             return response;
         }
 
+        // minimal register
+        public async Task<bool> RegisterAsync(Models.RegisterRequest request)
+        {
+            var url = "https://localhost:7137/api/Auth/register";
+            var result = await httpClient.PostAsJsonAsync(url, request);
+            return result.IsSuccessStatusCode;
+        }
+
         // get token from session
 
         public string? GetTokenFromSession()

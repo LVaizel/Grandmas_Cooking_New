@@ -3,81 +3,83 @@
 *@
 @{
 }
-@model List<Recipe>?
+@model Tuple<List<Recipe>, List<Recipe>>
 
-<h1> Home Page</h1>
-<table class="table">
-    <thead>
-        <tr>
-            <th>Recipe Name</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody id="recipes-tbody">
-        @if (Model != null && Model.Any())
-        {
-            foreach (var recipe in Model)
-            {
-                <tr>
-                    <td>@recipe.Name</td>
-                    <td>
-                        <a asp-action="RecipePage" asp-route-id="@recipe.Id" class="btn btn-sm btn-primary">View</a>
-                    </td>
-                </tr>
-            }
-        }
-        else
-        {
-            <tr>
-                <td colspan="4">No recipes available.</td>
-            </tr>
-        }
-    </tbody>
-</table>@* 
-<!-- jQuery from CDN -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js" crossorigin="anonymous"></script>
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h2 class="mb-0">Home Page</h2>
+            <div class="d-flex gap-2">
+                <input id="search" type="text" class="form-control form-control-sm" placeholder="Search recipes..." style="width: 220px" />
+                <a asp-action="Create1" class="btn btn-sm btn-success">New Recipe</a>
+            </div>
+        </div>
+        <div class="card-body">
+            <h5>All Recipes</h5>
+            <table class="table table-striped table-hover" id="all-table">
+                <thead>
+                    <tr>
+                        <th>Recipe Name</th>
+                        <th style="width:140px"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var recipe in Model.Item1)
+                    {
+                        <tr>
+                            <td class="recipe-name">@recipe.Name</td>
+                            <td>
+                                <a asp-action="RecipePage" asp-route-id="@recipe.Id" class="btn btn-sm btn-primary">View</a>
+                            </td>
+                        </tr>
+                    }
+                    @if (!Model.Item1.Any())
+                    {
+                        <tr><td colspan="2" class="text-muted">No recipes available.</td></tr>
+                    }
+                </tbody>
+            </table>
+
+            <h5 class="mt-4">My Recipes</h5>
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Recipe Name</th>
+                        <th style="width:140px"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var recipe in Model.Item2)
+                    {
+                        <tr>
+                            <td>@recipe.Name</td>
+                            <td>
+                                <a asp-action="RecipePage" asp-route-id="@recipe.Id" class="btn btn-sm btn-primary">View</a>
+                            </td>
+                        </tr>
+                    }
+                    @if (!Model.Item2.Any())
+                    {
+                        <tr><td colspan="2" class="text-muted">You have no recipes yet.</td></tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 
 <script>
-    $(function () {
-        // initial data: project to lightweight DTOs so shape matches AJAX response
-        var initial = @Html.Raw(System.Text.Json.JsonSerializer.Serialize((Model ?? new List<Recipe>()).Select(r => new { id = r.Id, name = r.Name })));
-
-        function render(recipes) {
-            var $tbody = $('#recipes-tbody');
-            $tbody.empty();
-
-            if (!recipes || recipes.length === 0) {
-                $tbody.append('<tr><td colspan="4">No recipes available.</td></tr>');
-                return;
-            }
-
-            recipes.forEach(function (r) {
-                // encode text to prevent XSS
-                var name = $('<div/>').text(r.name || '').html();
-                var tr = '<tr><td>' + name + '</td></tr>';
-                $tbody.append(tr);
+    (function(){
+        var input = document.getElementById('search');
+        var table = document.getElementById('all-table');
+        if (!input || !table) return;
+        input.addEventListener('input', function(){
+            var q = (input.value || '').toLowerCase();
+            Array.from(table.querySelectorAll('tbody tr')).forEach(function(row){
+                var nameCell = row.querySelector('.recipe-name');
+                var text = (nameCell ? nameCell.textContent : '').toLowerCase();
+                row.style.display = text.indexOf(q) !== -1 ? '' : 'none';
             });
-        }
-
-        // render server model immediately
-        render(initial);
-
-        // polling function
-        function fetchRecipes() {
-            $.ajax({
-                url: '@Url.Action("RecipesJson", "Home")',
-                method: 'GET',
-                dataType: 'json',
-                success: function (data) {
-                    render(data);
-                },
-                error: function (xhr, status, err) {
-                    console.error('Error fetching recipes:', status, err);
-                }
-            });
-        }
-
-        // start polling every 0.5 seconds
-        setInterval(fetchRecipes, 500);
-    });
-</script></script> *@
+        });
+    })();
+</script>
