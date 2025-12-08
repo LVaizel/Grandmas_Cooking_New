@@ -120,8 +120,5 @@ namespace Grandmas_Cooking_MVC.InfrastructureLayer
             var result = await httpClient.PostAsJsonAsync(url, step);
             return result.IsSuccessStatusCode;
         }
-
-
-
     }   
 }

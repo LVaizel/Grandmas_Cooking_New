@@ -1,6 +1,9 @@
-﻿using System.Runtime.CompilerServices;
-using Grandmas_Cooking_MVC.Models;
+﻿using Grandmas_Cooking_MVC.Models;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
+using System.Runtime.CompilerServices;
+using System.Security.Claims;
 
 namespace Grandmas_Cooking_MVC.InfrastructureLayer
 {
@@ -25,11 +28,23 @@ namespace Grandmas_Cooking_MVC.InfrastructureLayer
 
             AuthResponse? response = await result.Content.ReadFromJsonAsync<AuthResponse>();
 
-            if (response?.Token != null)
+            if ( response?.Token != null )
             {
-                // save token in cookie (minimal)
-                //_accessor.HttpContext?.Response.Cookies.Append("AuthToken", response.Token, new CookieOptions { HttpOnly = true, Secure = true });
-                _accessor.HttpContext?.Session.SetString("AuthToken", response.Token);
+                //Create User Claims (Store the JWT token inside the user's cookie data)
+                var claims = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.Name, request.UserName ?? "User"),
+                        new Claim("RecipeApiToken", response.Token)
+                    };
+
+                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var authProperties = new AuthenticationProperties { IsPersistent = true };
+
+                //Sign In (This creates the encrypted cookie automatically)
+                await _accessor.HttpContext.SignInAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(claimsIdentity),
+                    authProperties);
             }
 
             return response;
@@ -44,12 +59,9 @@ namespace Grandmas_Cooking_MVC.InfrastructureLayer
         }
 
         // get token from session
-
         public string? GetTokenFromSession()
         {
-            return _accessor.HttpContext?.Session.GetString("AuthToken");
+            return _accessor.HttpContext?.User.FindFirst("RecipeApiToken")?.Value;
         }
-
-
     }
 }

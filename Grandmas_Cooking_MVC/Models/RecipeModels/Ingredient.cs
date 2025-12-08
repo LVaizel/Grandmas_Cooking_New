@@ -1,11 +1,14 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Grandmas_Cooking_MVC.Models.RecipeModels
 {
     public class Ingredient
     {
         public int Id { get; set; }
+        [Required]
         public string Name { get; set; } = "";
+        [Required]
         public decimal Portion { get; set; }
 
         // Foreign Key
