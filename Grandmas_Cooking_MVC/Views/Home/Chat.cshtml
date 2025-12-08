@@ -1,0 +1,33 @@
+﻿@using Grandmas_Cooking_MVC.Models.ChatModels
+@model ChatViewModel
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+<div class="container mt-4">
+    <div>
+        <h2>AI Recipe Assistant</h2>
+    </div>
+
+    <div style="height: 350px; overflow-y: auto" class="p-2 rounded bg-light border">
+        @foreach (var message in Model.ChatHistory)
+        {
+            <div class="mb-3 d-flex @(message.Sender == "User" ? "justify-content-end" : "justify-content-start")">
+                <div class="p-2 rounded @(message.Sender == "User" ? "bg-primary text-white" : "bg-secondary text-white")" style="max-width: 70%;">
+                    <div>@message.Text</div>
+                    <small class="text-white">@message.TimeStamp.ToString("hh:mm tt")</small>
+                </div>
+            </div>
+        }
+    </div>
+
+    <form asp-action="Chat" method="post">
+        <div class="form-group">
+            <label for="userInput">Your Message:</label>
+            <input type="text" class="form-control" id="userMessage" name="UserMessage" required />
+        </div>
+        <button type="submit" class="btn btn-primary">Send</button>
+    </form>
+</div>

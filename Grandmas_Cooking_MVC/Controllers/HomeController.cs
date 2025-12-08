@@ -1,6 +1,9 @@
+using Grandmas_Cooking_MVC.Data;
 using Grandmas_Cooking_MVC.InfrastructureLayer;
 using Grandmas_Cooking_MVC.Models;
+using Grandmas_Cooking_MVC.Models.ChatModels;
 using Grandmas_Cooking_MVC.Models.RecipeModels;
+using Grandmas_Cooking_MVC.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
@@ -13,11 +16,15 @@ namespace Grandmas_Cooking_MVC.Controllers
     {
         private RecipeAPIService _recipeAPIService;
         private AuthApiService _authApiService;
+        private readonly OpenAiService _openAiService;
+        private readonly AppDbContext _context;
 
-        public HomeController(RecipeAPIService recipeApiService, AuthApiService authApiService)
+        public HomeController(RecipeAPIService recipeApiService, AuthApiService authApiService, OpenAiService openAiService,AppDbContext appDbContext)
         {
             _recipeAPIService = recipeApiService;
             _authApiService = authApiService;
+            _openAiService = openAiService;
+            _context = appDbContext;
         }
 
         [HttpGet]
@@ -174,6 +181,42 @@ namespace Grandmas_Cooking_MVC.Controllers
         {
             var ok = await _recipeAPIService.DeleteRecipeAsync(id);
             return RedirectToAction("HomePage");
+        }
+
+        [HttpGet]
+        public IActionResult Chat()
+        {
+            var model = new ChatViewModel
+            {
+                ChatHistory = _context.ChatMessages.OrderBy(cm => cm.TimeStamp).ToList()
+            };
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Chat(ChatViewModel chatViewModel)
+        {
+            var userMessage = new ChatMessage
+            {
+                Sender = "User",
+                Text = chatViewModel.UserMessage,
+            };
+            _context.ChatMessages.Add(userMessage);
+            await _context.SaveChangesAsync();
+
+            var response = await _openAiService.GetChatResponseAsync(chatViewModel.UserMessage);
+
+            var botMessage = new ChatMessage
+            {
+                Sender = "Bot",
+                Text = response,
+            };
+            _context.ChatMessages.Add(botMessage);
+            await _context.SaveChangesAsync();
+
+            chatViewModel.ChatHistory = _context.ChatMessages.OrderBy(cm => cm.TimeStamp).ToList();
+            chatViewModel.UserMessage = string.Empty;
+            return View(chatViewModel);
         }
     }
 }
