@@ -7,6 +7,19 @@
 }
 @model Tuple<List<Recipe>, List<Recipe>>
 
+<style>
+    .scroll-table {
+        max-height: 320px;
+        overflow: auto;
+    }
+    .scroll-table table thead th {
+        position: sticky;
+        top: 0;
+        background: #f8f9fa;
+        z-index: 2;
+    }
+</style>
+
 <div class="container mt-4">
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
@@ -21,54 +34,58 @@
         </div>
         <div class="card-body">
             <h5>All Recipes</h5>
-            <table class="table table-striped table-hover" id="all-table">
-                <thead>
-                    <tr>
-                        <th>Recipe Name</th>
-                        <th style="width:140px"></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ( var recipe in Model.Item1 )
-                    {
+            <div class="scroll-table mb-3">
+                <table class="table table-striped table-hover" id="all-table">
+                    <thead>
                         <tr>
-                            <td class="recipe-name">@recipe.Name</td>
-                            <td>
-                                <a asp-action="ViewRecipe" asp-route-recipeId="@recipe.Id" class="btn btn-sm btn-primary">View</a>
-                            </td>
+                            <th>Recipe Name</th>
+                            <th style="width:140px"></th>
                         </tr>
-                    }
-                    @if ( !Model.Item1.Any() )
-                    {
-                        <tr><td colspan="2" class="text-muted">No recipes available.</td></tr>
-                    }
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach ( var recipe in Model.Item1 )
+                        {
+                            <tr>
+                                <td class="recipe-name">@recipe.Name</td>
+                                <td>
+                                    <a asp-action="ViewRecipe" asp-route-recipeId="@recipe.Id" class="btn btn-sm btn-primary">View</a>
+                                </td>
+                            </tr>
+                        }
+                        @if ( !Model.Item1.Any() )
+                        {
+                            <tr><td colspan="2" class="text-muted">No recipes available.</td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
 
-            <h5 class="mt-4">My Recipes</h5>
-            <table class="table table-striped table-hover">
-                <thead>
-                    <tr>
-                        <th>Recipe Name</th>
-                        <th style="width:140px"></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ( var recipe in Model.Item2 )
-                    {
+            <h5 class="mt-2">My Recipes</h5>
+            <div class="scroll-table">
+                <table class="table table-striped table-hover" id="my-table">
+                    <thead>
                         <tr>
-                            <td>@recipe.Name</td>
-                            <td>
-                                <a asp-action="RecipePage" asp-route-id="@recipe.Id" class="btn btn-sm btn-primary">View</a>
-                            </td>
+                            <th>Recipe Name</th>
+                            <th style="width:140px"></th>
                         </tr>
-                    }
-                    @if ( !Model.Item2.Any() )
-                    {
-                        <tr><td colspan="2" class="text-muted">You have no recipes yet.</td></tr>
-                    }
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach ( var recipe in Model.Item2 )
+                        {
+                            <tr>
+                                <td class="recipe-name">@recipe.Name</td>
+                                <td>
+                                    <a asp-action="RecipePage" asp-route-id="@recipe.Id" class="btn btn-sm btn-primary">View</a>
+                                </td>
+                            </tr>
+                        }
+                        @if ( !Model.Item2.Any() )
+                        {
+                            <tr><td colspan="2" class="text-muted">You have no recipes yet.</td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
@@ -76,15 +93,23 @@
 <script>
     (function(){
         var input = document.getElementById('search');
-        var table = document.getElementById('all-table');
-        if (!input || !table) return;
-        input.addEventListener('input', function(){
-            var q = (input.value || '').toLowerCase();
+        var allTable = document.getElementById('all-table');
+        var myTable = document.getElementById('my-table');
+        if (!input) return;
+
+        function filterTable(table, query) {
+            if (!table) return;
             Array.from(table.querySelectorAll('tbody tr')).forEach(function(row){
                 var nameCell = row.querySelector('.recipe-name');
                 var text = (nameCell ? nameCell.textContent : '').toLowerCase();
-                row.style.display = text.indexOf(q) !== -1 ? '' : 'none';
+                row.style.display = text.indexOf(query) !== -1 ? '' : 'none';
             });
+        }
+
+        input.addEventListener('input', function(){
+            var q = (input.value || '').toLowerCase();
+            filterTable(allTable, q);
+            filterTable(myTable, q);
         });
     })();
 </script>
