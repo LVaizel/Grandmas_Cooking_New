@@ -3,10 +3,12 @@ using Grandmas_Cooking_MVC.InfrastructureLayer;
 using Grandmas_Cooking_MVC.Models;
 using Grandmas_Cooking_MVC.Models.ChatModels;
 using Grandmas_Cooking_MVC.Models.RecipeModels;
+using Grandmas_Cooking_MVC.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+
 using System.Diagnostics;
 using System.Reflection.Metadata.Ecma335;
 using System.Security.Claims;
@@ -18,7 +20,7 @@ namespace Grandmas_Cooking_MVC.Controllers
     {
         private RecipeAPIService _recipeAPIService;
         private AuthApiService _authApiService;
-        private readonly OpenAiService _openAiService;
+        private readonly  OpenAiService _openAiService;
         private readonly AppDbContext _context;
 
         public HomeController(RecipeAPIService recipeApiService, AuthApiService authApiService, OpenAiService openAiService,AppDbContext appDbContext)
@@ -211,6 +213,7 @@ namespace Grandmas_Cooking_MVC.Controllers
             return RedirectToAction("HomePage");
         }
 
+        [Authorize]
         [HttpGet]
         public IActionResult Chat()
         {
@@ -221,6 +224,7 @@ namespace Grandmas_Cooking_MVC.Controllers
             return View(model);
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Chat(ChatViewModel chatViewModel)
         {
