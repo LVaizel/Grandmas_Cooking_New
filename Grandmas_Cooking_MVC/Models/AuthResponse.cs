@@ -1,4 +1,6 @@
-﻿namespace Grandmas_Cooking_MVC.Models
+﻿// Gurvansh - AuthResponse.cs created for representing authentication response data.
+
+namespace Grandmas_Cooking_MVC.Models
 {
     public class AuthResponse
     {

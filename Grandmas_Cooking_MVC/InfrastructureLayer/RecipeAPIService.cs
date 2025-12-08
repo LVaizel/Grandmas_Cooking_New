@@ -1,4 +1,6 @@
-﻿using Grandmas_Cooking_MVC.Models.RecipeModels;
+﻿// Gurvansh and John - RecipeAPIService.cs created for handling recipe-related API calls.
+
+using Grandmas_Cooking_MVC.Models.RecipeModels;
 using static System.Net.WebRequestMethods;
 
 namespace Grandmas_Cooking_MVC.InfrastructureLayer

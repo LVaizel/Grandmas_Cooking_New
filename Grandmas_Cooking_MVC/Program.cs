@@ -1,3 +1,5 @@
+// Gurvansh and John - Program.cs file for setting up the ASP.NET Core MVC application with authentication, database context, and services.
+
 using Microsoft.AspNetCore.Authentication.Cookies;
 
 using Grandmas_Cooking_MVC.Data;

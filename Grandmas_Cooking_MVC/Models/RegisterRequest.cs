@@ -1,3 +1,5 @@
+// Gurvansh - RegisterRequest.cs created for representing user registration request data.
+
 using System.ComponentModel.DataAnnotations;
 
 namespace Grandmas_Cooking_MVC.Models

@@ -1,4 +1,6 @@
-﻿namespace Grandmas_Cooking_API.Models.RecipeModels
+﻿
+
+namespace Grandmas_Cooking_API.Models.RecipeModels
 {
     public class TempRecipe
     {

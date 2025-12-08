@@ -1,4 +1,6 @@
-﻿using Grandmas_Cooking_MVC.Models.ChatModels;
+﻿// Gaganvir - AppDbContext.cs created for Entity Framework Core database context including ChatMessages DbSet.
+
+using Grandmas_Cooking_MVC.Models.ChatModels;
 using Microsoft.EntityFrameworkCore;
 
 namespace Grandmas_Cooking_MVC.Data

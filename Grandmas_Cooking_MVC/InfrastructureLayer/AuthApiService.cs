@@ -1,4 +1,6 @@
-﻿using Grandmas_Cooking_MVC.Models;
+﻿// John, Gurvansh - AuthApiService.cs created for handling authentication API calls and user session management.
+
+using Grandmas_Cooking_MVC.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;

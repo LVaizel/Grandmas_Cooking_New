@@ -1,3 +1,5 @@
+// John, Gurvansh, Gaganvir - HomeController.cs created for handling home page, authentication, recipe management, and chat functionality.
+
 using Grandmas_Cooking_MVC.Data;
 using Grandmas_Cooking_MVC.InfrastructureLayer;
 using Grandmas_Cooking_MVC.Models;
