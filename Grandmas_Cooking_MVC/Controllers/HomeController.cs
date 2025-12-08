@@ -50,7 +50,7 @@ namespace Grandmas_Cooking_MVC.Controllers
             }
 
             ModelState.AddModelError("", "Invalid login attempt.");
-            return View();
+            return View(_loginDto);
         }
 
         [HttpGet]

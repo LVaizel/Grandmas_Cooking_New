@@ -15,19 +15,24 @@
         </div>
         <div class="card-body">
             <form asp-action="Create2" method="post" class="row g-3">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
                 <div class="col-12">
                     <label class="form-label">Recipe Name</label>
                     <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
                 </div>
 
                 <div class="col-12">
                     <label class="form-label">Image URL</label>
                     <input asp-for="ImageUrl" class="form-control" />
+                    <span asp-validation-for="ImageUrl" class="text-danger"></span>
                 </div>
 
                 <div class="col-12">
                     <label class="form-label">Description</label>
                     <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
                 </div>
 
                 <div class="col-12">
@@ -37,12 +42,14 @@
                         <div class="row g-2 mb-2">
                             <div class="col-md-8">
                                 <input asp-for="Ingredients[i].Name" class="form-control" placeholder="Ingredient name" />
+                                <span asp-validation-for="Ingredients[i].Name" class="text-danger"></span>
                             </div>
                             <div class="col-md-4">
                                 <div class="input-group">
                                     <input asp-for="Ingredients[i].Portion" type="number" step="0.01" class="form-control" placeholder="Portion" />
                                     <span class="input-group-text">g</span>
                                 </div>
+                                <span asp-validation-for="Ingredients[i].Portion" class="text-danger"></span>
                             </div>
                         </div>
                     }
@@ -54,11 +61,12 @@
                     {
                         <div class="row g-2 mb-2">
                             <div class="col-md-2">
-                                <input type="hidden" asp-for="RecipeSteps[i].StepNumber" value="@(i + 1)" />
+                                <input asp-for="RecipeSteps[i].StepNumber" type="hidden" value="@(i + 1)" />
                                 <input type="text" class="form-control" value="@(i + 1)" readonly />
                             </div>
                             <div class="col-md-10">
                                 <input asp-for="RecipeSteps[i].Instruction" class="form-control" placeholder="Step instruction" />
+                                <span asp-validation-for="RecipeSteps[i].Instruction" class="text-danger"></span>
                                 <input type="hidden" asp-for="RecipeSteps[i].Id" />
                                 <input type="hidden" asp-for="RecipeSteps[i].RecipeId" />
                             </div>
@@ -74,3 +82,7 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
