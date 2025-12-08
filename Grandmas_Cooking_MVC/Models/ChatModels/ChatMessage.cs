@@ -1,4 +1,6 @@
-﻿namespace Grandmas_Cooking_MVC.Models.ChatModels
+﻿// Gaganvir - ChatMessage.cs created for representing individual chat messages in the chat functionality.
+
+namespace Grandmas_Cooking_MVC.Models.ChatModels
 {
     public class ChatMessage
     {

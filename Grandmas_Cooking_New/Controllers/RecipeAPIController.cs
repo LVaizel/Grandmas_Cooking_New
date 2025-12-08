@@ -1,4 +1,6 @@
-﻿using Grandmas_Cooking_API.Models.RecipeModels;
+﻿// Gurvansh and John - RecipeAPIController.cs created for handling recipe-related API endpoints.
+
+using Grandmas_Cooking_API.Models.RecipeModels;
 using Grandmas_Cooking_API.ServiceLayer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

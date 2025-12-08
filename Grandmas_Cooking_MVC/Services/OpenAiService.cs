@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿// Gaganvir - OpenAiService.cs created for integrating OpenAI's chat functionality.
+
+using System.Text;
 using System.Text.Json;
 
 //https://www.youtube.com/watch?v=55fLTVYXpdg

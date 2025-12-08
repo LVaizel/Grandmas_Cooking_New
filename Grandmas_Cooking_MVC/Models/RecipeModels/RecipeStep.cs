@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿// Gurvansh and John - RecipeStep model representing a single step in a recipe
+
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace Grandmas_Cooking_MVC.Models.RecipeModels

@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿// Gurvansh - LoginDto.cs created for representing login request data.
+
+using System.ComponentModel.DataAnnotations;
 
 namespace Grandmas_Cooking_MVC.Models
 {

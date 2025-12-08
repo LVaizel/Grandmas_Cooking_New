@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿// John - Ingredient model representing a single ingredient in a recipe
+
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace Grandmas_Cooking_MVC.Models.RecipeModels

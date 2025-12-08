@@ -1,4 +1,6 @@
-﻿using Grandmas_Cooking_API.Data;
+﻿// Gurvansh and John - RecipeService.cs created for handling recipe-related business logic.
+
+using Grandmas_Cooking_API.Data;
 using Grandmas_Cooking_API.Models;
 using Grandmas_Cooking_API.Models.RecipeModels;
 using Microsoft.EntityFrameworkCore;
