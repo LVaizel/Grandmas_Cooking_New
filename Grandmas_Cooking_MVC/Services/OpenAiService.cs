@@ -1,6 +1,12 @@
 ﻿using System.Text;
 using System.Text.Json;
 
+//https://www.youtube.com/watch?v=55fLTVYXpdg
+//https://zenkins.com/career-insights/integrating-chatgpt-in-net-core/
+//https://dtoyoda10.medium.com/building-a-c-chatbot-with-chatgpt-8f2056f90b10
+//https://github.com/OkGoDoIt/OpenAI-API-dotnet?tab=readme-ov-file#chat-api
+// used the link above as a reference
+
 namespace Grandmas_Cooking_MVC.Services
 {
     public class OpenAiService
