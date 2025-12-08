@@ -1,8 +1,11 @@
-﻿namespace Grandmas_Cooking_MVC.Models.RecipeModels
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Grandmas_Cooking_MVC.Models.RecipeModels
 {
     public class Recipe
     {
         public int Id { get; set; }
+        [Required]
         public string Name { get; set; } = "";
         public string UserId { get; set; } = "";
         public List<Ingredient> Ingredients { get; set; } = new List<Ingredient>();

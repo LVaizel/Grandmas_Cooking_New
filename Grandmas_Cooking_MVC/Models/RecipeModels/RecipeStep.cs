@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Grandmas_Cooking_MVC.Models.RecipeModels
 {
@@ -7,6 +8,7 @@ namespace Grandmas_Cooking_MVC.Models.RecipeModels
         public int Id { get; set; }
 
         public int StepNumber { get; set; } // e.g., 1, 2, 3
+        [Required]
         public string Instruction { get; set; } = ""; // The actual text
 
         // Foreign Key

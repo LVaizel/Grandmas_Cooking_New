@@ -11,7 +11,10 @@
             <h2 class="mb-0">Home Page</h2>
             <div class="d-flex gap-2">
                 <input id="search" type="text" class="form-control form-control-sm" placeholder="Search recipes..." style="width: 220px" />
-                <a asp-action="Create1" class="btn btn-sm btn-success">New Recipe</a>
+                @if ( User.Identity != null && User.Identity.IsAuthenticated )
+                {
+                    <a asp-action="Create1" class="btn btn-sm btn-success">New Recipe</a>
+                }
             </div>
         </div>
         <div class="card-body">
@@ -24,16 +27,16 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var recipe in Model.Item1)
+                    @foreach ( var recipe in Model.Item1 )
                     {
                         <tr>
                             <td class="recipe-name">@recipe.Name</td>
                             <td>
-                                <a asp-action="RecipePage" asp-route-id="@recipe.Id" class="btn btn-sm btn-primary">View</a>
+                                <a asp-action="ViewRecipe" asp-route-recipeId="@recipe.Id" class="btn btn-sm btn-primary">View</a>
                             </td>
                         </tr>
                     }
-                    @if (!Model.Item1.Any())
+                    @if ( !Model.Item1.Any() )
                     {
                         <tr><td colspan="2" class="text-muted">No recipes available.</td></tr>
                     }
@@ -49,7 +52,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var recipe in Model.Item2)
+                    @foreach ( var recipe in Model.Item2 )
                     {
                         <tr>
                             <td>@recipe.Name</td>
@@ -58,7 +61,7 @@
                             </td>
                         </tr>
                     }
-                    @if (!Model.Item2.Any())
+                    @if ( !Model.Item2.Any() )
                     {
                         <tr><td colspan="2" class="text-muted">You have no recipes yet.</td></tr>
                     }

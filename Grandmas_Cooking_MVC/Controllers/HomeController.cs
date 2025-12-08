@@ -1,10 +1,13 @@
 using Grandmas_Cooking_MVC.InfrastructureLayer;
 using Grandmas_Cooking_MVC.Models;
 using Grandmas_Cooking_MVC.Models.RecipeModels;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.Reflection.Metadata.Ecma335;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Grandmas_Cooking_MVC.Controllers
@@ -29,10 +32,22 @@ namespace Grandmas_Cooking_MVC.Controllers
         [HttpPost]
         public async Task<IActionResult> LoginPage(LoginRequest _loginDto)
         {
-            // Minimal placeholder: redirect to HomePage after POST
             var authResponse = await _authApiService.GetAuthResponse(_loginDto);
 
-            return RedirectToAction("HomePage");
+            if ( _authApiService.GetTokenFromSession() != null )
+            {
+                return RedirectToAction("HomePage");
+            }
+
+            ModelState.AddModelError("", "Invalid login attempt.");
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToAction("LoginPage");
         }
 
         [HttpGet]
@@ -45,7 +60,7 @@ namespace Grandmas_Cooking_MVC.Controllers
         public async Task<IActionResult> RegisterPage(RegisterRequest request)
         {
             var ok = await _authApiService.RegisterAsync(request);
-            if (ok)
+            if ( ok )
             {
                 return RedirectToAction("LoginPage");
             }
@@ -63,25 +78,37 @@ namespace Grandmas_Cooking_MVC.Controllers
             return View(model);
         }
 
+        [Authorize]
+        public async Task<IActionResult> ViewRecipe(int RecipeId)
+        {
+            var recipe = await _recipeAPIService.GetRecipeByIdAsync(RecipeId);
+            if ( recipe == null )
+            {
+                return NotFound();
+            }
+            var model = recipe;
+            return View(model);
+        }
+
         // JSON endpoint for AJAX polling - return lightweight DTOs to avoid circular references
         [HttpGet]
         public async Task<IActionResult> RecipesJson()
         {
             var recipes = await _recipeAPIService.GetRecipesAsync();
-            var dto = (recipes ?? new List<Recipe>())
+            var dto = ( recipes ?? new List<Recipe>() )
                         .Select(r => new { id = r.Id, name = r.Name })
                         .ToList();
             return Json(dto);
         }
 
-
+        [Authorize]
         [HttpGet]
         public IActionResult Create1()
         {
             // Ensure view has a TempRecipe model so asp-for binds correctly
             return View(new TempRecipe());
         }
-
+        [Authorize]
         [HttpPost]
         public IActionResult Create1(TempRecipe temp)
         {
@@ -90,7 +117,7 @@ namespace Grandmas_Cooking_MVC.Controllers
             var ingredients = temp?.NumIngredients ?? 0;
             return RedirectToAction("Create2", new { steps = steps, ingredients = ingredients });
         }
-
+        [Authorize]
         [HttpGet]
         public IActionResult Create2(int steps, int ingredients)
         {
@@ -102,12 +129,12 @@ namespace Grandmas_Cooking_MVC.Controllers
 
             return View(recipeTuple);
         }
-
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Create2(Recipe recipe)
         {
             var result = await _recipeAPIService.CreateRecipeAsync(recipe);
-            if (result)
+            if ( result )
             {
                 return RedirectToAction("HomePage");
             }
@@ -119,24 +146,25 @@ namespace Grandmas_Cooking_MVC.Controllers
         }
 
         //RecipePage shows all the details for a recipe. Ingredients and steps can be updated, as they will be inputs, their default values being what is in the model. 
-
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> RecipePage(int id)
         {
             var recipe = await _recipeAPIService.GetRecipeByIdAsync(id);
-            if (recipe == null)
+            if ( recipe == null )
             {
                 return NotFound();
             }
             return View(recipe);
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> RecipePage(Recipe recipe)
         {
             // Fetch existing full recipe first so we don't accidentally wipe fields if collections failed to bind
             var existing = await _recipeAPIService.GetRecipeByIdAsync(recipe.Id);
-            if (existing == null)
+            if ( existing == null )
             {
                 return NotFound();
             }
@@ -151,7 +179,7 @@ namespace Grandmas_Cooking_MVC.Controllers
             existing.RecipeSteps = recipe.RecipeSteps ?? existing.RecipeSteps;
 
             var result = await _recipeAPIService.UpdateRecipeAsync(existing);
-            if (result)
+            if ( result )
             {
                 // Reload the page via GET so full recipe data (name/description/etc.) is fetched from API and displayed
                 return RedirectToAction("RecipePage", new { id = recipe.Id });
@@ -161,7 +189,7 @@ namespace Grandmas_Cooking_MVC.Controllers
                 ModelState.AddModelError(string.Empty, "An error occurred while updating the recipe.");
                 // Fetch full recipe from API so view has all fields (top section) populated
                 var full = await _recipeAPIService.GetRecipeByIdAsync(recipe.Id);
-                if (full == null)
+                if ( full == null )
                 {
                     return NotFound();
                 }
@@ -169,6 +197,7 @@ namespace Grandmas_Cooking_MVC.Controllers
             }
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> DeleteRecipe(int id)
         {

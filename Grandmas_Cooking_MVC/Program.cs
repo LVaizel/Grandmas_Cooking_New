@@ -1,7 +1,15 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Home/LoginPage"; // Where to send users who aren't logged in
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(120); // How long the login lasts
+    });
 
 builder.Services.AddSession(options =>
 {

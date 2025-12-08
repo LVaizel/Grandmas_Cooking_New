@@ -1,0 +1,105 @@
+﻿@model Grandmas_Cooking_MVC.Models.RecipeModels.Recipe
+
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h2 class="mb-0">Recipe Details</h2>
+        </div>
+        <div class="card-body">
+            @if (Model == null)
+            {
+                <p>Recipe not found.</p>
+            }
+            else
+            {
+                <div class="mb-3 row">
+                    <label class="col-sm-2 col-form-label">Recipe Name</label>
+                    <div class="col-sm-10">
+                        <p class="form-control-plaintext">@Model.Name</p>
+                    </div>
+                </div>
+
+                <div class="mb-3 row">
+                    <label class="col-sm-2 col-form-label">Description</label>
+                    <div class="col-sm-10">
+                        <p class="form-control-plaintext">@Model.Description</p>
+                    </div>
+                </div>
+
+                <div class="mb-3 row">
+                    <label class="col-sm-2 col-form-label">Image</label>
+                    <div class="col-sm-10">
+                        <p class="form-control-plaintext">@Model.ImageUrl</p>
+                        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                        {
+                            <img src="@Model.ImageUrl" alt="Recipe image" class="img-fluid rounded mt-2" style="max-width:400px;" />
+                        }
+                    </div>
+                </div>
+
+                <div class="mb-3 row">
+                    <label class="col-sm-2 col-form-label">Owner</label>
+                    <div class="col-sm-10">
+                        <p class="form-control-plaintext">@Model.UserId</p>
+                    </div>
+                </div>
+
+                <div class="mb-4 row">
+                    <label class="col-sm-2 col-form-label">Created</label>
+                    <div class="col-sm-10">
+                        <p class="form-control-plaintext">@Model.CreatedAt.ToString("u")</p>
+                    </div>
+                </div>
+
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h5 class="mb-0">Ingredients</h5>
+                    </div>
+                    <div class="card-body">
+                        @if (Model.Ingredients != null && Model.Ingredients.Any())
+                        {
+                            <ul class="list-group list-group-flush">
+                                @for (int i = 0; i < Model.Ingredients.Count; i++)
+                                {
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <span>@Model.Ingredients[i].Name</span>
+                                        <span class="badge bg-secondary">@Model.Ingredients[i].Portion g</span>
+                                    </li>
+                                }
+                            </ul>
+                        }
+                        else
+                        {
+                            <p class="text-muted">No ingredients listed.</p>
+                        }
+                    </div>
+                </div>
+
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h5 class="mb-0">Steps</h5>
+                    </div>
+                    <div class="card-body">
+                        @if (Model.RecipeSteps != null && Model.RecipeSteps.Any())
+                        {
+                            <ol class="list-group list-group-numbered">
+                                @for (int i = 0; i < Model.RecipeSteps.Count; i++)
+                                {
+                                    <li class="list-group-item">@Model.RecipeSteps[i].Instruction</li>
+                                }
+                            </ol>
+                        }
+                        else
+                        {
+                            <p class="text-muted">No steps listed.</p>
+                        }
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <a asp-action="HomePage" class="btn btn-secondary">Back</a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
