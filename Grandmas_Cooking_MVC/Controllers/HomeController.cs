@@ -133,11 +133,16 @@ namespace Grandmas_Cooking_MVC.Controllers
         {
             // Prepare a Recipe and a TempRecipe with counts for the view
             Recipe newRecipe = new Recipe();
-            TempRecipe temp = new TempRecipe { NumIngredients = ingredients, NumSteps = steps };
+            for ( int i = 0; i < steps; i++ )
+            {
+                newRecipe.RecipeSteps.Add(new RecipeStep());
+            }
+            for ( int i = 0; i < ingredients; i++ )
+            {
+                newRecipe.Ingredients.Add(new Ingredient());
+            };
 
-            var recipeTuple = Tuple.Create(newRecipe, temp);
-
-            return View(recipeTuple);
+            return View(newRecipe);
         }
         [Authorize]
         [HttpPost]
@@ -151,7 +156,7 @@ namespace Grandmas_Cooking_MVC.Controllers
             else
             {
                 ModelState.AddModelError(string.Empty, "An error occurred while creating the recipe.");
-                return View(Tuple.Create(recipe, new TempRecipe()));
+                return View(recipe);
             }
         }
 

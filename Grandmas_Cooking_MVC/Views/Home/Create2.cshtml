@@ -5,7 +5,7 @@
 *@
 @{
 }
-@model Tuple<Grandmas_Cooking_MVC.Models.RecipeModels.Recipe, Grandmas_Cooking_MVC.Models.RecipeModels.TempRecipe>
+@model Recipe
 
 <div class="container mt-4">
     <div class="card">
@@ -17,30 +17,30 @@
             <form asp-action="Create2" method="post" class="row g-3">
                 <div class="col-12">
                     <label class="form-label">Recipe Name</label>
-                    <input type="text" name="Name" value="@Model.Item1.Name" class="form-control" />
+                    <input asp-for="Name" class="form-control" />
                 </div>
 
                 <div class="col-12">
                     <label class="form-label">Image URL</label>
-                    <input type="text" name="ImageUrl" value="@Model.Item1.ImageUrl" class="form-control" />
+                    <input asp-for="ImageUrl" class="form-control" />
                 </div>
 
                 <div class="col-12">
                     <label class="form-label">Description</label>
-                    <textarea name="Description" class="form-control" rows="3">@Model.Item1.Description</textarea>
+                    <textarea asp-for="Description" class="form-control" rows="3"></textarea>
                 </div>
 
                 <div class="col-12">
                     <h5>Ingredients</h5>
-                    @for (int i = 0; i < Model.Item2.NumIngredients; i++)
+                    @for ( int i = 0; i < Model.Ingredients.Count; i++ )
                     {
                         <div class="row g-2 mb-2">
                             <div class="col-md-8">
-                                <input type="text" name="Ingredients[@i].Name" class="form-control" placeholder="Ingredient name" />
+                                <input asp-for="Ingredients[i].Name" class="form-control" placeholder="Ingredient name" />
                             </div>
                             <div class="col-md-4">
                                 <div class="input-group">
-                                    <input type="number" name="Ingredients[@i].Portion" step="0.01" class="form-control" placeholder="Portion" />
+                                    <input asp-for="Ingredients[i].Portion" type="number" step="0.01" class="form-control" placeholder="Portion" />
                                     <span class="input-group-text">g</span>
                                 </div>
                             </div>
@@ -50,15 +50,17 @@
 
                 <div class="col-12">
                     <h5>Steps</h5>
-                    @for (int i = 0; i < Model.Item2.NumSteps; i++)
+                    @for ( int i = 0; i < Model.RecipeSteps.Count; i++ )
                     {
                         <div class="row g-2 mb-2">
                             <div class="col-md-2">
-                                <input type="hidden" name="RecipeSteps[@i].StepNumber" value="@(i + 1)" />
-                                <input type="text" value="@(i + 1)" class="form-control" readonly />
+                                <input type="hidden" asp-for="RecipeSteps[i].StepNumber" value="@(i + 1)" />
+                                <input type="text" class="form-control" value="@(i + 1)" readonly />
                             </div>
                             <div class="col-md-10">
-                                <input type="text" name="RecipeSteps[@i].Instruction" class="form-control" placeholder="Step instruction" />
+                                <input asp-for="RecipeSteps[i].Instruction" class="form-control" placeholder="Step instruction" />
+                                <input type="hidden" asp-for="RecipeSteps[i].Id" />
+                                <input type="hidden" asp-for="RecipeSteps[i].RecipeId" />
                             </div>
                         </div>
                     }
