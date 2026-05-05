@@ -28,6 +28,11 @@ namespace Grandmas_Cooking_MVC.InfrastructureLayer
 
             var result = await httpClient.PostAsJsonAsync(url, request);
 
+            if( !result.IsSuccessStatusCode )
+            {
+                return null;
+            }
+
             AuthResponse? response = await result.Content.ReadFromJsonAsync<AuthResponse>();
 
             if ( response?.Token != null )
