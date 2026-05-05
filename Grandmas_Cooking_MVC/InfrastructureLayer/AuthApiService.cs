@@ -4,8 +4,9 @@ using Grandmas_Cooking_MVC.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
-using System.Runtime.CompilerServices;
 using System.Security.Claims;
+using System.Net.Http.Json;
+using System.Text.Json;
 
 namespace Grandmas_Cooking_MVC.InfrastructureLayer
 {
@@ -21,21 +22,40 @@ namespace Grandmas_Cooking_MVC.InfrastructureLayer
         }
 
         // get the auth token from the RecipeApiService
-
         public async Task<AuthResponse?> GetAuthResponse(LoginRequest request)
         {
             var url = "https://localhost:7137/api/Auth/login";
 
-            var result = await httpClient.PostAsJsonAsync(url, request);
+            HttpResponseMessage result;
+            try
+            {
+                result = await httpClient.PostAsJsonAsync(url, request);
+            }
+            catch (Exception)
+            {
+                // network/connection error
+                return null;
+            }
 
-            if( !result.IsSuccessStatusCode )
+            var content = await result.Content.ReadAsStringAsync();
+
+            if (!result.IsSuccessStatusCode)
             {
                 return null;
             }
 
-            AuthResponse? response = await result.Content.ReadFromJsonAsync<AuthResponse>();
+            AuthResponse? response = null;
+            try
+            {
+                response = JsonSerializer.Deserialize<AuthResponse?>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            }
+            catch (JsonException)
+            {
+                // Response wasn't valid JSON.
+                return null;
+            }
 
-            if ( response?.Token != null )
+            if (response?.Token != null)
             {
                 //Create User Claims (Store the JWT token inside the user's cookie data)
                 var claims = new List<Claim>
@@ -47,11 +67,14 @@ namespace Grandmas_Cooking_MVC.InfrastructureLayer
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                 var authProperties = new AuthenticationProperties { IsPersistent = true };
 
-                //Sign In (This creates the encrypted cookie automatically)
-                await _accessor.HttpContext.SignInAsync(
-                    CookieAuthenticationDefaults.AuthenticationScheme,
-                    new ClaimsPrincipal(claimsIdentity),
-                    authProperties);
+                // Sign in only if we have an HttpContext (avoid NRE in background scenarios)
+                if (_accessor.HttpContext != null)
+                {
+                    await _accessor.HttpContext.SignInAsync(
+                        CookieAuthenticationDefaults.AuthenticationScheme,
+                        new ClaimsPrincipal(claimsIdentity),
+                        authProperties);
+                }
             }
 
             return response;
